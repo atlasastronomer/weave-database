@@ -4,14 +4,7 @@ mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URI
 
-console.log('connecting to', url)
 mongoose.connect(url)
-.then(res => {
-  console.log('successfully connected to MongoDB')
-})
-.catch(err => {
-  console.log('error connecting to MongoDB:', err.message)
-})
 
 const postSchema = new mongoose.Schema({
   date: {
@@ -26,7 +19,7 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  cldUrl: {
+  publicId: {
     type: String,
     required: true,
   },
@@ -36,7 +29,7 @@ const postSchema = new mongoose.Schema({
   } 
 })
 
-blogSchema.set('toJSON', {
+postSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     returnedObject.date = returnedObject.date.split(' ').slice(0, 4).join(' ')
