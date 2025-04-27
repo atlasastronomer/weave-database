@@ -9,17 +9,19 @@ require('dotenv').config()
 
 const app = express()
 
-const Blog = require('./models/blog')
 const Link = require('./models/link')
 const User = require('./models/user')
 const Post = require('./models/post')
 
 const { cloudinary } = require('./utils/cloudinary')
 
+const blogsRouter = require('./controllers/blogs')
+
 app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}))
+app.use('/api/blogs', blogsRouter)
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')
@@ -28,84 +30,6 @@ const getTokenFrom = (req) => {
   }
   return null
 }
-
-// Blogs Route
-app.post('/api/my-blogs', async (req, res) => {
-
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-  
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const blogs = await Blog.find({user: decodedToken.id})
-  res.json(blogs)
-})
-
-app.get('/api/blogs', async (req, res) => {
-  const blogs = await Blog.find({}).populate('user',{username: 1, name: 1})
-  res.json(blogs)
-})
-
-app.get('/api/blogs/:id', async (req, res) => {
-    const blog = await Blog.findById(req.params.id)
-
-    if(blog) {
-      res.json(blog)
-    }
-    else {
-      res.status(400).end()
-    }
-})
-
-app.post('/api/blogs', async (req, res) => {
-  const body = req.body
-
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-
-  if (!decodedToken.id) {
-    return res.status(401).json({error: "token invalid"})
-  }
-
-  const user = await User.findById(decodedToken.id)
-
-  const blog = new Blog({
-      date: body.date,
-      title: body.title,
-      author: body.author,
-      content: body.content,
-      user: user.id
-  })
-  
-  const savedBlog = await blog.save()
-  user.blogs = user.blogs.concat(savedBlog.id)
-  await user.save()
-
-  res.json(savedBlog)
-})
-
-app.put('/api/blogs/:id'), async (req, res  ) => {
-  const { date, title, author, content } = req.body
-
-    const blog = await Blog.findById(req.params.id)
-    if(!blog) {
-      return res.status(404).end()
-    }
-
-    blog.date = date
-    blog.title = title
-    blog.author = author
-    blog.content = content
-
-    return blog.save().then((updatedBlog) => {
-      res.json(updatedBlog)
-    })
-}
-
-app.delete('/api/blogs/:id', async (req, res) => {
-    const blog = await Blog.findByIdAndDelete(req.params.id)
-    res.status(204).end()
-})
 
 // Gallery Routes
 app.post('/api/upload-gallery', async (req, res) => {
