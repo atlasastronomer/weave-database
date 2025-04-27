@@ -146,6 +146,11 @@ app.post('/api/upload-gallery', async (req, res) => {
   }
 })
 
+app.delete('/api/gallery/:id', async (req, res) => {
+  const post = await Post.findByIdAndDelete(req.params.id)
+  res.status(204).end()
+})
+
 app.get('/api/gallery', async (req, res) => {
   const { resources } = await cloudinary.search.expression('folder:gallery')
   .sort_by('public_id','desc')
@@ -280,8 +285,6 @@ app.post('/api/login', async (req, res) => {
   const token = jwt.sign(userForToken, process.env.SECRET)
 
   res.status(200).send({token, username: user.username, name: user.name})
-
-  // if (!user && passwordCorrect)
 })
 
 // Display users route
