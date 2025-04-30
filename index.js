@@ -4,8 +4,8 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
-require('express-async-errors')
 require('dotenv').config()
+require('express-async-errors')
 
 const app = express()
 
@@ -13,181 +13,16 @@ const Link = require('./models/link')
 const User = require('./models/user')
 const Post = require('./models/post')
 
-const { cloudinary } = require('./utils/cloudinary')
-
-const blogsRouter = require('./controllers/blogs')
-
 app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}))
+
+const blogsRouter = require('./controllers/blogs')
+const postsRouter = require('./controllers/gallery')
+
 app.use('/api/blogs', blogsRouter)
-
-const getTokenFrom = (req) => {
-  const authorization = req.get('authorization')
-  if(authorization && authorization.startsWith('Bearer ')){
-    return authorization.replace('Bearer ','')
-  }
-  return null
-}
-
-// Gallery Routes
-app.post('/api/upload-gallery', async (req, res) => {
-
-  const body = req.body
-  
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const user = await User.findById(decodedToken.id)
-
-  try {
-    const fileStr = body.data
-    const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
-      upload_preset: 'gallery'
-    })
-
-    const post = new Post({
-      date: body.date,
-      title: body.title,
-      author: body.author,
-      publicId: uploadedResponse.public_id,
-      user: user.id,
-    })
-  
-    const savedPost = await post.save()
-    user.posts = user.posts.concat(savedPost.id)
-    await user.save()
-
-    res.json(savedPost)
-  }
-  catch (err) {
-    console.log(err)
-    res.status(500).json({error: 'Could not upload image'})
-  }
-})
-
-app.delete('/api/gallery/:id', async (req, res) => {
-  const post = await Post.findByIdAndDelete(req.params.id)
-  res.status(204).end()
-})
-
-app.get('/api/gallery', async (req, res) => {
-  const { resources } = await cloudinary.search.expression('folder:gallery')
-  .sort_by('public_id','desc')
-  .execute()
-  
-  const publicIds = resources.map(file => file.public_id)
-  
-  res.send(publicIds)
-})
-
-app.post('/api/my-gallery', async (req, res) => {
-
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-  
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const posts = await Post.find({user: decodedToken.id})
-  res.json(posts)
-})
-
-// Links Route
-app.get('/api/links', async (req, res) => {
-  const links = await Link.find({}).populate('user',{username: 1, name: 1})
-  res.json(links)
-})
-
-app.get('/api/links/:id', (req, res, next) => {
-  Link.findById(req.params.id)
-  .then(link => {
-    if (link) {
-      res.json(link)
-    }
-    else {
-      res.status(400).end
-    }
-  })
-  .catch(err => next(err))
-})
-
-app.post('/api/links', async (req, res, next) => {
-  const body = req.body
-  
-  const user = await User.findById(body.userId)
-
-  const link = new Link({
-    title: body.title,
-    mediaLink: body.mediaLink,
-    user: user.id
-  })
-
-  const savedLink = await link.save()
-  user.links = user.links.concat(savedLink.id)
-  await user.save()
-
-  res.json(savedLink)
-})
-
-app.put('/api/links/:id'), (req, res, next) => {
-  const {title, mediaLink} = req.body
-  Link.findById(req.params.id)
-  .then(link => {
-    if (!link) {
-      return res.status(404).end()
-    }
-
-    link.title = title
-    link.mediaLink = mediaLink
-    
-    return link.save().then((updatedLink) => {
-      res.json(updatedLink)
-    })
-  })
-  .catch(err => next(err))
-}
-
-app.delete('/api/links/:id', (request, response, next) => {
-  Link.findByIdAndDelete(request.params.id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
-})
-
-// Signup Route
-app.post('/api/signup', async (req, res, next) => {
-  try {
-    const {username, name, password} = req.body
-
-    const saltRounds = 10
-    const passwordHash = await bcrypt.hash(password, saltRounds)
-  
-    const user = new User({
-      username,
-      name,
-      passwordHash,
-    })
-  
-    const savedUser = await user.save()
-  
-    const userForToken = {
-      username: user.username,
-      id: user._id,
-    }
-  
-    const token = jwt.sign(userForToken, process.env.SECRET)
-    res.status(201).send({token, username: user.username, name: user.name})
-  }
-  catch (error) {
-    next(error)
-  }
-})
+app.use('/api/gallery', postsRouter)
 
 // Login Route
 app.post('/api/login', async (req, res) => {
