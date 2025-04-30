@@ -24,6 +24,35 @@ const postsRouter = require('./controllers/gallery')
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
 
+// Signup Route
+app.post('/api/signup', async (req, res, next) => {
+  try {
+    const {username, name, password} = req.body
+
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+  
+    const user = new User({
+      username,
+      name,
+      passwordHash,
+    })
+  
+    const savedUser = await user.save()
+  
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+  
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    res.status(201).send({token, username: user.username, name: user.name})
+  }
+  catch (error) {
+    next(error)
+  }
+})
+
 // Login Route
 app.post('/api/login', async (req, res) => {
   const {username, password} = req.body
