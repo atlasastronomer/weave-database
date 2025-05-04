@@ -76,7 +76,7 @@ Your version of the project should be working now. Please let me know about any 
 atlasastronomer@gmail.com
 
 ## Next Steps:
-Currently, media creators can view their links on the homepage, but they cannot upload new ones. The backend logic is fully functional (you can verify this with POSTMAN), so the next step is to implement the frontend functionality to allow users to add their own links.
+Currently, media creators can view their links on the homepage, but they cannot upload new ones. The backend logic is fully functional (you can verify this with POSTMAN), so the next step is to implement the frontend functionality to allow media creators to add their own links.
 
 ## Resources
 Full Stack Open for learning REST APIs, React.js, MongoDB, and Postman  
