@@ -25,27 +25,32 @@ This project was built through VSCode. While it is possible to use another text 
 - Postman
 - Github
 
-## Setup
-1. Create a new directory
+## Setup Instructions
+### Step 1:
+Create a new directory
+### Step 2:
 2. Navigate to new directory; clone frontend and backend repositories in new directory
-3. MongoDB Database Configuration:
+### Step 3:
+MongoDB Database Configuration:
    - Login/Signup to MongoDB Atlas
    - Create new cluster
    - Navigate to cluster
    - Create new database
    - In database, create the following collections: avatars, blogs, links, posts, user
-4. MongoDB Connection:
-   - Click Connect
-   - Select MongoDB for VS Code
-   - Follow instructions; save connection string and password for later use
-5. Cloudinary Configuration:
+### Step 4:
+MongoDB Connection:
+   - Click Connect in your MongoDB Atlas dashboard
+   - Choose connection method MongoDB for VS Code
+   - Follow instructions to obtain connection string and save for later use (Step 6-7)
+### Step 5:
+Cloudinary Configuration:
    - Login/Signup to Cloudinary
-   - Save Cloud name for later use
-   - Save API Key for later use
-   - Save API Secret for later use 
-6. In frontend directory:
-   - Ensure you are in frontend directory
-   - Create .env file
+   - Navigate to Dashboard and create new app (if necessary)
+   - Find your Cloud Name, API Key, and API Secret on the dashboard.
+   - Save for later use (Step 6-7)
+### Step 6
+**In frontend directory**:
+   - Create `.env` file in the root of the directory
    - Set up environment variables:
      - MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/ (use connection string obtained from step 4)
      - VITE_PORT=3001
@@ -53,9 +58,10 @@ This project was built through VSCode. While it is possible to use another text 
      - CLOUDINARY_API_KEY=your_cloudinary_api_key
      - CLOUDINARY_API_SECRET=your_cloudinary_api_secret
      - CLOUDINARY_NAME=your_cloudinary_cloud_name
-7. In backend directory:
-   - Ensure you are in backend directory
-   - Create .env file
+### Step 7
+**In backend directory:**
+   - Create `.env` file in the root of the directory
+   - Set up environment variables:
    - Environment variables are identical to the ones in the frontend directory, only replace VITE_PORT with PORT
      - MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/ (use connection string obtained from step 4)
      - PORT=3001
