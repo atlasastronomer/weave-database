@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 
+mongoose.set('strictQuery', false)
+
+const url = process.env.MONGODB_URI
+
+mongoose.connect(url)
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -30,7 +36,12 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
     }
-  ]
+  ],
+  avatar:
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Avatar'
+    }
 })
 
 userSchema.set('toJSON', {

@@ -9,22 +9,24 @@ require('express-async-errors')
 
 const app = express()
 
-const Link = require('./models/link')
 const User = require('./models/user')
-const Post = require('./models/post')
 
 app.use(cors())
 app.use(express.static('dist'))
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true}))
+app.use(express.json({limit: '75mb'}));
+app.use(express.urlencoded({limit: '75mb', extended: true}))
 
 const blogsRouter = require('./controllers/blogs')
 const postsRouter = require('./controllers/gallery')
+const avatarRouter = require('./controllers/avatars')
+const linksRouter = require('./controllers/links')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
+app.use('/api/avatar', avatarRouter)
+app.use('/api/links', linksRouter)
 
-// Signup Route
+/** Signup Route */
 app.post('/api/signup', async (req, res, next) => {
   try {
     const {username, name, password} = req.body
@@ -53,7 +55,7 @@ app.post('/api/signup', async (req, res, next) => {
   }
 })
 
-// Login Route
+/** Login Route */
 app.post('/api/login', async (req, res) => {
   const {username, password} = req.body
 
