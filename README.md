@@ -18,7 +18,7 @@ This project was built through VSCode. While it is possible to use another text 
 - Node.js (v23.11.0)
 - Express.js
 - MongoDB (Mongoose ODM)
-### Tools and Enviornments
+### Tools and Environments
 - VSCode
 - Cloudinary API
 - Node Package Manager (npm)
@@ -46,7 +46,7 @@ This project was built through VSCode. While it is possible to use another text 
 6. In frontend directory:
    - Ensure you are in frontend directory
    - Create .env file
-   - Set up enviornment variables:
+   - Set up environment variables:
      - MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/ (use connection string obtained from step 4)
      - VITE_PORT=3001
      - SECRET=your_secret_key (Replace <secret> with a secret string)
@@ -56,7 +56,7 @@ This project was built through VSCode. While it is possible to use another text 
 7. In backend directory:
    - Ensure you are in backend directory
    - Create .env file
-   - Enviornment variables are identical to the ones in the frontend directory, only replace VITE_PORT with PORT
+   - Environment variables are identical to the ones in the frontend directory, only replace VITE_PORT with PORT
      - MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/ (use connection string obtained from step 4)
      - PORT=3001
      - SECRET=your_secret_key (Replace <secret> with a secret string)
