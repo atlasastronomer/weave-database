@@ -73,7 +73,7 @@ To run this project locally, you’ll need to clone both the frontend and backen
      ```
 
 Your version of the project should be working now. Please let me know about any bugs that need squashing via email:  
-@atlasastronomer@gmail.com
+atlasastronomer@gmail.com
 
 ## Resources
 Full Stack Open for learning REST APIs, React.js, MongoDB, and Postman  
