@@ -62,7 +62,7 @@ blogsRouter.post('/', async (req, res) => {
   res.json(savedBlog)
 })
 
-blogsRouter.put('/:id', async (req, res  ) => {
+blogsRouter.put('/:id', async (req, res) => {
   const { date, title, author, content } = req.body
 
     const blog = await Blog.findById(req.params.id)
