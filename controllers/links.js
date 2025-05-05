@@ -48,4 +48,9 @@ linksRouter.post('/', async(req, res) => {
   res.json(savedLink)
 })
 
+linksRouter.delete('/:id', async (req, res) => {
+  const link = await Link.findByIdAndDelete(req.params.id)
+  res.status(204).end
+})
+
 module.exports = linksRouter
