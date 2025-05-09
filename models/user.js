@@ -37,11 +37,14 @@ const userSchema = new mongoose.Schema({
       ref: 'Post'
     }
   ],
-  avatar:
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Avatar'
-    }
+  avatar: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Avatar'
+  },
+  wallpaper: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Wallpaper'
+  }
 })
 
 userSchema.set('toJSON', {

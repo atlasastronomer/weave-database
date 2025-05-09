@@ -20,10 +20,12 @@ const blogsRouter = require('./controllers/blogs')
 const postsRouter = require('./controllers/gallery')
 const avatarRouter = require('./controllers/avatars')
 const linksRouter = require('./controllers/links')
+const wallpaperRouter = require('./controllers/wallpapers')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
 app.use('/api/avatar', avatarRouter)
+app.use('/api/wallpaper', wallpaperRouter)
 app.use('/api/links', linksRouter)
 
 /** Signup Route */
