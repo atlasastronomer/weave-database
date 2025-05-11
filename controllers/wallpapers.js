@@ -22,7 +22,7 @@ wallpaperRouter.get('/', async (req, res) => {
     return res.status(401).json({error: 'token invalid'})
   }
 
-  const wallpaper = await Wallpaper.find({user: decodedToken.id})
+  const wallpaper = await Wallpaper.findOne({user: decodedToken.id})
   res.json(wallpaper)
 })
 

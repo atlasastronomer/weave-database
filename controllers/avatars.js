@@ -22,7 +22,7 @@ avatarRouter.get('/', async (req, res) => {
     return res.status(401).json({error: 'token invalid'})
   }
 
-  const avatar = await Avatar.find({user: decodedToken.id})
+  const avatar = await Avatar.findOne({user: decodedToken.id})
   res.json(avatar)
 })
 
