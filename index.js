@@ -1,3 +1,4 @@
+/** Imports */
 const express = require('express')
 const cors = require('cors')
 
@@ -11,22 +12,26 @@ const app = express()
 
 const User = require('./models/user')
 
+/** Congifuration */
 app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json({limit: '75mb'}));
 app.use(express.urlencoded({limit: '75mb', extended: true}))
 
+/** Routers */
 const blogsRouter = require('./controllers/blogs')
 const postsRouter = require('./controllers/gallery')
 const avatarRouter = require('./controllers/avatars')
 const linksRouter = require('./controllers/links')
 const wallpaperRouter = require('./controllers/wallpapers')
+const aboutRouter = require('./controllers/abouts')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
 app.use('/api/avatar', avatarRouter)
 app.use('/api/wallpaper', wallpaperRouter)
 app.use('/api/links', linksRouter)
+app.use('/api/about', aboutRouter)
 
 /** Signup Route */
 app.post('/api/signup', async (req, res, next) => {
@@ -79,14 +84,13 @@ app.post('/api/login', async (req, res) => {
   res.status(200).send({token, username: user.username, name: user.name})
 })
 
-// Display users route
+/** Display users route */
 app.get('/api/users', async (req, res) => {
   const users = await User.find({}).populate('blogs', {date: 1, title: 1, content: 1}).populate('links')
   res.json(users)
 })
 
-// handling of requests with unknown endpoints
-
+/** Handling of requests with unknown endpoints */
 const unknownEndpoint = (req, res) => {
   res.status(404).send({error: 'unknown endpoint'})
 }

@@ -57,8 +57,7 @@ avatarRouter.post('/', async (req, res) => {
       return res.json(newAvatar)
     }
   }
-  catch (err) {
-    console.log(err)
+  catch {
     res.status(500).json({error: 'Could not upload image'})
   }
 })

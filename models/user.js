@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
       ref: 'Post'
     }
   ],
+  about: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'About',
+  },
   avatar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Avatar'
