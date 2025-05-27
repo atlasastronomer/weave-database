@@ -4,7 +4,14 @@ mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URI
 
+console.log('connecting to', url)
 mongoose.connect(url)
+.then(res => {
+  console.log('successfully connected to MongoDB')
+})
+.catch(err => {
+  console.log('error connecting to MongoDB:', err.message)
+})
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -19,6 +26,18 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   passwordHash: String,
+  about: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'About',
+  },
+  avatar: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Avatar'
+  },
+  wallpaper: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Wallpaper'
+  },
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -37,18 +56,12 @@ const userSchema = new mongoose.Schema({
       ref: 'Post'
     }
   ],
-  about: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'About',
-  },
-  avatar: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Avatar'
-  },
-  wallpaper: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Wallpaper'
-  }
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Friend',
+    }
+  ],
 })
 
 userSchema.set('toJSON', {

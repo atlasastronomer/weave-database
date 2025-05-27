@@ -41,12 +41,15 @@ avatarRouter.post('/', async (req, res) => {
     const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
       upload_preset: 'gallery'
     })
-
-    const avatar = await Avatar.findOne({user: decodedToken.id})
+    const user = await User.findById(decodedToken.id)
+    
+    const avatar = await Avatar.findOne({user: user})
 
     if (avatar) {
       avatar.publicId = uploadedResponse.public_id
       await avatar.save()
+      user.avatar = avatar.id
+      await user.save()
       return res.json(avatar)
     }
     else {
@@ -54,6 +57,8 @@ avatarRouter.post('/', async (req, res) => {
         publicId: uploadedResponse.public_id,
         user: decodedToken.id,
       })
+      user.avatar = newAvatar.id
+      await user.save()
       return res.json(newAvatar)
     }
   }

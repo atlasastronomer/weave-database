@@ -40,7 +40,6 @@ aboutRouter.post('/', async(req, res) => {
     if (about) {
       about.about = body.about
       await about.save()
-      user.about = about.id
       await user.save()
       return res.json(about)
     }
