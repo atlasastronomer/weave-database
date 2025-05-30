@@ -25,6 +25,7 @@ const avatarRouter = require('./controllers/avatars')
 const linksRouter = require('./controllers/links')
 const wallpaperRouter = require('./controllers/wallpapers')
 const aboutRouter = require('./controllers/abouts')
+const friendsRouter = require('./controllers/friendLists')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
@@ -32,6 +33,7 @@ app.use('/api/avatar', avatarRouter)
 app.use('/api/wallpaper', wallpaperRouter)
 app.use('/api/links', linksRouter)
 app.use('/api/about', aboutRouter)
+app.use('/api/friends', friendsRouter)
 
 /** Signup Route */
 app.post('/api/signup', async (req, res, next) => {

@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Wallpaper'
   },
+  friendList:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'FriendList',
+  },
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,12 +58,6 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
-    }
-  ],
-  friends: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Friend',
     }
   ],
 })

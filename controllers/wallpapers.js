@@ -27,7 +27,7 @@ wallpaperRouter.get('/', async (req, res) => {
 })
 
 wallpaperRouter.post('/', async (req, res) => {
-
+  
   const body = req.body
   
   const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
@@ -43,10 +43,13 @@ wallpaperRouter.post('/', async (req, res) => {
     })
 
     const wallpaper = await Wallpaper.findOne({user: decodedToken.id})
+    const user = await User.findById(decodedToken.id)
 
     if (wallpaper) {
       wallpaper.publicId = uploadedResponse.public_id
       await wallpaper.save()
+      user.wallpaper = wallpaper.id
+      await user.save()
       return res.json(wallpaper)
     }
     else {
@@ -54,11 +57,13 @@ wallpaperRouter.post('/', async (req, res) => {
         publicId: uploadedResponse.public_id,
         user: decodedToken.id,
       })
+      user.wallpaper = newWallpaper.id
+      await user.save()
       return res.json(newWallpaper)
     }
   }
   catch (err) {
-    console.log(err)
+    console.error(err)
     res.status(500).json({error: 'Could not upload image'})
   }
 })
