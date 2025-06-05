@@ -43,7 +43,7 @@ avatarRouter.post('/', async (req, res) => {
     })
     const user = await User.findById(decodedToken.id)
     
-    const avatar = await Avatar.findOne({user: user})
+    const avatar = await Avatar.findOne({user: user.id})
 
     if (avatar) {
       avatar.publicId = uploadedResponse.public_id

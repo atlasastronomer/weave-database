@@ -88,7 +88,7 @@ app.post('/api/login', async (req, res) => {
 
 /** Display users route */
 app.get('/api/users', async (req, res) => {
-  const users = await User.find({}).populate('blogs', {date: 1, title: 1, content: 1}).populate('links')
+  const users = await User.find({}).populate('about').populate('avatar').populate('blogs').populate('friendList').populate('posts').populate('links').populate('wallpaper')
   res.json(users)
 })
 
