@@ -78,7 +78,9 @@ atlasastronomer@gmail.com
 ## Next Steps:
 Currently, media creators can view their links on the homepage, but they cannot upload new ones. The backend logic is fully functional (you can verify this with POSTMAN), so the next step is to implement the frontend functionality to allow media creators to add their own links. # DONE
 
-We would like for media users to set their background image similar to how they can set their avatar # TODO
+We would like for media creators to set their background image similar to how they can set their avatar # DONE
+
+We have created an explore page for media creators to view the profiles of other media creators. Currently, when they click "view profile", they are navigated to a new link and an empty modal opens. We want to populate the modal with the media creator's link page, home page, gallery page, and blog page. # TODO
 
 ## Resources
 Full Stack Open for learning REST APIs, React.js, MongoDB, and Postman  
