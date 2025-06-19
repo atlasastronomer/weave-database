@@ -92,6 +92,12 @@ app.get('/api/users', async (req, res) => {
   res.json(users)
 })
 
+app.get('/api/users/:id', async (req, res) => {
+  const username = req.params.id
+  const user = await User.findOne({username: username}).populate('about').populate('avatar').populate('blogs').populate('friendList').populate('posts').populate('links').populate('wallpaper')
+  res.json(user)
+})
+
 /** Handling of requests with unknown endpoints */
 const unknownEndpoint = (req, res) => {
   res.status(404).send({error: 'unknown endpoint'})
