@@ -26,6 +26,17 @@ wallpaperRouter.get('/', async (req, res) => {
   res.json(wallpaper)
 })
 
+wallpaperRouter.get('/:id', async (req, res) => {
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  
+  if (!decodedToken.id) {
+    return res.status(401).json({error: 'token invalid'})
+  }
+
+  const wallpaper = await Wallpaper.findOne({user: decodedToken.id})
+  res.json(wallpaper)
+})
+
 wallpaperRouter.post('/', async (req, res) => {
   
   const body = req.body

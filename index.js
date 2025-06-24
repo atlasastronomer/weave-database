@@ -35,6 +35,14 @@ app.use('/api/links', linksRouter)
 app.use('/api/about', aboutRouter)
 app.use('/api/friends', friendsRouter)
 
+const getTokenFrom = (req) => {
+  const authorization = req.get('authorization')
+  if(authorization && authorization.startsWith('Bearer ')){
+    return authorization.replace('Bearer ','')
+  }
+  return null
+}
+
 /** Signup Route */
 app.post('/api/signup', async (req, res, next) => {
   try {
@@ -84,6 +92,26 @@ app.post('/api/login', async (req, res) => {
   const token = jwt.sign(userForToken, process.env.SECRET)
 
   res.status(200).send({token, username: user.username, name: user.name})
+})
+
+/** Route for if user is viewing their page */
+app.post('/api/is-self', async (req, res) => {
+  const { username } = req.body
+
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+
+  if (!decodedToken.id) {
+    return res.status(401).json({error: "token invalid", isSelf: false})
+  }
+
+  const user = await User.findById(decodedToken.id)
+
+  if (user.username === username) {
+    return res.json({isSelf: true})
+  }
+  else {
+    return res.json({isSelf: false})
+  }
 })
 
 /** Display users route */
