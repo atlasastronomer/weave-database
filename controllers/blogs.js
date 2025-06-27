@@ -14,7 +14,6 @@ const getTokenFrom = (req) => {
 }
 
 blogsRouter.get('/', async (req, res) => {
-
   const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
   
   if (!decodedToken.id) {

@@ -26,6 +26,16 @@ avatarRouter.get('/', async (req, res) => {
   res.json(avatar)
 })
 
+avatarRouter.get('/:id', async (req, res) => {
+  const username = req.params.id
+  const user = await User.findOne({username: username})
+
+  const avatar = await Avatar.findOne({user: user.id})
+
+  res.json(avatar)
+})
+
+
 avatarRouter.post('/', async (req, res) => {
 
   const body = req.body
