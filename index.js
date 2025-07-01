@@ -109,6 +109,7 @@ app.post('/api/is-self', async (req, res) => {
   if (user.username === username) {
     return res.json({isSelf: true})
   }
+  
   else {
     return res.json({isSelf: false})
   }

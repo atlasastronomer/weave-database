@@ -14,13 +14,7 @@ const getTokenFrom = (req) => {
 }
 
 blogsRouter.get('/', async (req, res) => {
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-  
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const blogs = await Blog.find({user: decodedToken.id})
+  const blogs = await Blog.find({})
   res.json(blogs)
 })
 

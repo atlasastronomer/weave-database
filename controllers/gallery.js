@@ -16,13 +16,7 @@ const getTokenFrom = (req) => {
 }
 
 postsRouter.get('/', async (req, res) => {
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-  
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const posts = await Post.find({user: decodedToken.id})
+  const posts = await Post.find({})
   res.json(posts)
 })
 
