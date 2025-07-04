@@ -117,7 +117,7 @@ app.post('/api/is-self', async (req, res) => {
 
 /** Display users route */
 app.get('/api/users', async (req, res) => {
-  const users = await User.find({}).populate('about').populate('avatar').populate('blogs').populate('friendList').populate('posts').populate('links').populate('wallpaper')
+  const users = await User.find({}).populate('avatar')
   res.json(users)
 })
 

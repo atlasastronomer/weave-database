@@ -32,7 +32,7 @@ const blogSchema = new mongoose.Schema({
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-    returnedObject.date = returnedObject.date.split(' ').slice(0, 4).join(' ')
+    returnedObject.date = returnedObject.date
     delete returnedObject._id
     delete returnedObject.__v
   }
