@@ -38,9 +38,9 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Wallpaper'
   },
-  friendList:{
+  followRelations: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'FriendList',
+    ref: 'FollowRelations',
   },
   blogs: [
     {

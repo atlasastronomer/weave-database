@@ -1,33 +1,27 @@
 const mongoose = require('mongoose')
 
-const friendListSchema = new mongoose.Schema({
+const followRelationsSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     unique: true
   },
-  friends: [
+  followers: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }
   ],
-  pending: [
+  following: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }
-  ],
-  sent: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    }
-  ],
+  ]
 })
 
-friendListSchema.set('toJSON', {
+followRelationsSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -35,6 +29,6 @@ friendListSchema.set('toJSON', {
   }
 })
 
-const FriendList = mongoose.model('FriendList', friendListSchema)
+const FollowRelations = mongoose.model('FollowerList', followRelationsSchema)
 
-module.exports = FriendList
+module.exports = FollowRelations

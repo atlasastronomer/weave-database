@@ -25,7 +25,7 @@ const avatarRouter = require('./controllers/avatars')
 const linksRouter = require('./controllers/links')
 const wallpaperRouter = require('./controllers/wallpapers')
 const aboutRouter = require('./controllers/abouts')
-const friendsRouter = require('./controllers/friendLists')
+const followsRouter = require('./controllers/followRelations')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
@@ -33,7 +33,7 @@ app.use('/api/avatar', avatarRouter)
 app.use('/api/wallpaper', wallpaperRouter)
 app.use('/api/links', linksRouter)
 app.use('/api/about', aboutRouter)
-app.use('/api/friends', friendsRouter)
+app.use('/api/follow-info', followsRouter)
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')
@@ -123,7 +123,7 @@ app.get('/api/users', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
   const username = req.params.id
-  const user = await User.findOne({username: username}).populate('about').populate('avatar').populate('blogs').populate('friendList').populate('posts').populate('links').populate('wallpaper')
+  const user = await User.findOne({username: username}).populate('about').populate('avatar').populate('blogs').populate('posts').populate('links').populate('wallpaper')
   res.json(user)
 })
 
