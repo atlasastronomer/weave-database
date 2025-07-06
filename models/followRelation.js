@@ -29,6 +29,6 @@ followRelationsSchema.set('toJSON', {
   }
 })
 
-const FollowRelations = mongoose.model('FollowerList', followRelationsSchema)
+const FollowRelations = mongoose.model('FollowRelations', followRelationsSchema)
 
 module.exports = FollowRelations

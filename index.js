@@ -123,7 +123,21 @@ app.get('/api/users', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
   const username = req.params.id
-  const user = await User.findOne({username: username}).populate('about').populate('avatar').populate('blogs').populate('posts').populate('links').populate('wallpaper')
+  const user = await User.findOne({username: username})
+    .populate('about')
+    .populate('avatar')
+    .populate('blogs')
+    .populate('posts')
+    .populate('links')
+    .populate('wallpaper')
+    .populate({
+      path: 'followRelations',
+      populate: [
+        { path: 'followers', model: 'User' },
+        { path: 'following', model: 'User' },
+      ]
+    })
+
   res.json(user)
 })
 

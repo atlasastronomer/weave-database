@@ -19,6 +19,10 @@ followsRouter.get('/:id', async (req, res) => {
 
   const followRelations = await FollowRelations.findOne({user: user._id})
 
+  if (!followRelations) {
+    return res.status(404).json({message: 'User has no followers & is not following anyone.'})
+  }
+
   return res.json({followers: followRelations.followers, following: followRelations.following})
 })
 
@@ -45,32 +49,44 @@ followsRouter.post('/:id', async (req, res) => {
     return res.status(400).json({ message: 'Cannot follow yourself' })
   }
 
-  const userRelations = await FollowRelations.findOne({user: user._id}) ||
-  new FollowRelations ({
+  const userRelations = await FollowRelations.findOne({user: user._id}).populate('followers').populate('following')
+  const targetRelations = await FollowRelations.findOne({user: targetUser._id}).populate('followers').populate('following')
+  
+  if (!userRelations) {
+    userRelations = new FollowRelations ({
     user: user._id,
     followers: [],
-    following: []
-  })
-
-  const targetRelations = await FollowRelations.findOne({user: targetUser._id}) ||
-  new FollowRelations ({
+    following: [],
+    })
+  }
+  
+  if (!targetRelations) {
+    targetRelations = new FollowRelations ({
     user: targetUser._id,
     followers: [],
-    following: []
-  })
+    following: [],
+    })
+  }
 
-  const isFollowing = targetRelations.following.some(id => id.equals(user._id))
+  const isFollowing = userRelations.following.some(id => id.equals(targetUser._id))
   
   if (isFollowing) {
     userRelations.following = userRelations.following.filter(id => !id.equals(targetUser._id))
     targetRelations.followers = targetRelations.followers.filter(id => !id.equals(user._id))
-  } else {
+  }
+  else {
     userRelations.following.push(targetUser._id)
     targetRelations.followers.push(user._id)
   }
 
   await userRelations.save()
   await targetRelations.save()
+  
+  user.followRelations = userRelations
+  targetUser.followRelations = targetRelations
+
+  await user.save()
+  await targetUser.save()
 
   res.status(200).json({message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully'})
 })
