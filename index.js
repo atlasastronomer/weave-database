@@ -11,6 +11,10 @@ require('express-async-errors')
 const app = express()
 
 const User = require('./models/user')
+const About = require('./models/about')
+const Avatar = require('./models/avatar')
+const Wallpaper = require('./models/wallpaper')
+const FollowRelations = require('./models/followRelation')
 
 /** Congifuration */
 app.use(cors())
@@ -46,28 +50,58 @@ const getTokenFrom = (req) => {
 /** Signup Route */
 app.post('/api/signup', async (req, res, next) => {
   try {
-    const {username, name, password} = req.body
+    const { username, name, password } = req.body
 
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
-  
+
     const user = new User({
       username,
       name,
       passwordHash,
     })
-  
+
     const savedUser = await user.save()
-  
+
+    const about = new About({
+      about: 'Hello! Welcome to my profile.',
+      user: savedUser._id,
+    })
+
+    const avatar = new Avatar({
+      publicId: 'a4wnscg3rzebph187nng',
+      user: savedUser._id,
+    })
+
+    const wallpaper = new Wallpaper({
+      publicId: 'binknaxauzfs2dj7mcae',
+      user: savedUser._id,
+    })
+
+    const followRelations = new FollowRelations({
+      user: savedUser._id,
+      followers: [],
+      following: [],
+    })
+
+    await Promise.all([about.save(), avatar.save(), wallpaper.save(), followRelations.save()])
+
+    savedUser.about = about._id
+    savedUser.avatar = avatar._id
+    savedUser.wallpaper = wallpaper._id
+    savedUser.followRelations = followRelations._id
+
+    await savedUser.save()
+
     const userForToken = {
-      username: user.username,
-      id: user._id,
+      username: savedUser.username,
+      id: savedUser._id,
     }
-  
+
     const token = jwt.sign(userForToken, process.env.SECRET)
-    res.status(201).send({token, username: user.username, name: user.name})
-  }
-  catch (error) {
+
+    res.status(201).send({ token, username: savedUser.username, name: savedUser.name })
+  } catch (error) {
     next(error)
   }
 })

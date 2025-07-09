@@ -64,8 +64,13 @@ const userSchema = new mongoose.Schema({
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    returnedObject.about = returnedObject.about.about
+    returnedObject.id = returnedObject._id?.toString?.() || null
+
+    returnedObject.about = returnedObject.about || null
+    returnedObject.avatar = returnedObject.avatar || null
+    returnedObject.wallpaper = returnedObject.wallpaper || null
+    returnedObject.followRelations = returnedObject.followRelations || null
+
     delete returnedObject._id
     delete returnedObject.__v
     delete returnedObject.passwordHash

@@ -49,24 +49,20 @@ followsRouter.post('/:id', async (req, res) => {
     return res.status(400).json({ message: 'Cannot follow yourself' })
   }
 
-  const userRelations = await FollowRelations.findOne({user: user._id}).populate('followers').populate('following')
-  const targetRelations = await FollowRelations.findOne({user: targetUser._id}).populate('followers').populate('following')
-  
-  if (!userRelations) {
-    userRelations = new FollowRelations ({
+  const userRelations = await FollowRelations.findOne({ user: user._id }).populate('followers').populate('following') 
+  || new FollowRelations({
     user: user._id,
     followers: [],
     following: [],
-    })
-  }
-  
-  if (!targetRelations) {
-    targetRelations = new FollowRelations ({
+  })
+
+  const targetRelations = await FollowRelations.findOne({ user: targetUser._id }).populate('followers').populate('following')
+  || new FollowRelations({
     user: targetUser._id,
     followers: [],
     following: [],
-    })
-  }
+  })
+
 
   const isFollowing = userRelations.following.some(id => id.equals(targetUser._id))
   
@@ -88,7 +84,7 @@ followsRouter.post('/:id', async (req, res) => {
   await user.save()
   await targetUser.save()
 
-  res.status(200).json({message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully'})
+  res.status(200).json({ following: !isFollowing })
 })
 
 module.exports = followsRouter
