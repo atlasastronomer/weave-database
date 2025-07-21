@@ -15,6 +15,7 @@ const About = require('./models/about')
 const Avatar = require('./models/avatar')
 const Wallpaper = require('./models/wallpaper')
 const FollowRelations = require('./models/followRelation')
+const Message = require('./models/message')
 
 /** Congifuration */
 app.use(cors())
@@ -30,6 +31,7 @@ const linksRouter = require('./controllers/links')
 const wallpaperRouter = require('./controllers/wallpapers')
 const aboutRouter = require('./controllers/abouts')
 const followsRouter = require('./controllers/followRelations')
+const messagesRouter = require('./controllers/messages')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
@@ -38,6 +40,7 @@ app.use('/api/wallpaper', wallpaperRouter)
 app.use('/api/links', linksRouter)
 app.use('/api/about', aboutRouter)
 app.use('/api/follow-info', followsRouter)
+app.use('/api/messages', messagesRouter)
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')
