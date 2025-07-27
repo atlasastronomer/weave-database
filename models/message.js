@@ -34,7 +34,8 @@ const messageSchema = new mongoose.Schema({
 messageSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-    returnedObject.date = returnedObject.date
+    returnedObject.sender = returnedObject.sender.toString()
+    returnedObject.recipient = returnedObject.recipient.toString()
     delete returnedObject._id
     delete returnedObject.__v
   }

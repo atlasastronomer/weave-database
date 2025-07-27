@@ -7,6 +7,10 @@ const url = process.env.MONGODB_URI
 mongoose.connect(url)
 
 const postSchema = new mongoose.Schema({
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
   date: {
     type: String,
     required: true,
@@ -26,13 +30,12 @@ const postSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  } 
+  }
 })
 
 postSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-    returnedObject.date = returnedObject.date
     delete returnedObject._id
     delete returnedObject.__v
   }

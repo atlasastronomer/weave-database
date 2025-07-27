@@ -52,8 +52,8 @@ messagesRouter.post('/:id', async (req, res) => {
   const recipient = await User.findOne({username: recipientUsername})
 
   const message = new Message({
-    sender: sender,
-    recipient: recipient,
+    sender: sender._id,
+    recipient: recipient._id,
     content: body.content,
   })
 
@@ -61,7 +61,7 @@ messagesRouter.post('/:id', async (req, res) => {
   sender.messages = sender.messages.concat(sentMessage)
   await sender.save()
 
-  res.json(sentMessage)
+  res.json(sentMessage.toJSON())
 })
 
 module.exports = messagesRouter

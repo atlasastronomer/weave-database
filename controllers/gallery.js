@@ -39,7 +39,6 @@ postsRouter.post('/', async (req, res) => {
     })
 
     const post = new Post({
-      date: body.date,
       title: body.title,
       author: body.author,
       publicId: uploadedResponse.public_id,
