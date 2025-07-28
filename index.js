@@ -32,6 +32,7 @@ const wallpaperRouter = require('./controllers/wallpapers')
 const aboutRouter = require('./controllers/abouts')
 const followsRouter = require('./controllers/followRelations')
 const messagesRouter = require('./controllers/messages')
+const likesRouter = require('./controllers/likes')
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/gallery', postsRouter)
@@ -41,6 +42,7 @@ app.use('/api/links', linksRouter)
 app.use('/api/about', aboutRouter)
 app.use('/api/follow-info', followsRouter)
 app.use('/api/messages', messagesRouter)
+app.use('/api/likes',likesRouter)
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')

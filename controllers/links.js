@@ -21,7 +21,7 @@ linksRouter.get('/', async (req, res) => {
   }
 
   const links = await Link.find({user: decodedToken.id})
-  res.json(links)
+  return res.json(links)
 })
 
 linksRouter.post('/', async(req, res) => {
@@ -45,12 +45,12 @@ linksRouter.post('/', async(req, res) => {
   user.links = user.links.concat(savedLink.id)
   await user.save()
 
-  res.json(savedLink)
+  return res.json(savedLink)
 })
 
 linksRouter.delete('/:id', async (req, res) => {
   const link = await Link.findByIdAndDelete(req.params.id)
-  res.status(204).end
+  return res.status(204).end
 })
 
 module.exports = linksRouter
