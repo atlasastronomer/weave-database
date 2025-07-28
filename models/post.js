@@ -11,10 +11,6 @@ const postSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  date: {
-    type: String,
-    required: true,
-  },
   title: {
     type: String,
     required: true,
@@ -30,7 +26,13 @@ const postSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  }
+  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ]
 })
 
 postSchema.set('toJSON', {
