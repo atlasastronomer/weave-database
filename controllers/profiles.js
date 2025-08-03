@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const About = require('../models/about')
 
-const aboutRouter = express.Router()
+const profileRouter = express.Router()
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')
@@ -13,7 +13,7 @@ const getTokenFrom = (req) => {
   return null
 }
 
-aboutRouter.get('/', async (req, res) => {
+profileRouter.get('/', async (req, res) => {
   const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
   
   if (!decodedToken.id) {
@@ -24,7 +24,7 @@ aboutRouter.get('/', async (req, res) => {
   res.json(about)
 })
 
-aboutRouter.post('/', async(req, res) => {
+profileRouter.post('/', async(req, res) => {
   const body = req.body
   
   const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
@@ -37,25 +37,17 @@ aboutRouter.post('/', async(req, res) => {
   try {
     const about = await About.findOne({user: decodedToken.id})
 
-    if (about) {
-      about.about = body.about
-      await about.save()
-      await user.save()
-      return res.json(about)
-    }
-    else {
-      const newAbout = await About.create({
-        about: body.about,
-        user: user.id,
-      })
-      user.about = newAbout.id
-      await user.save()
-      return res.json(newAbout)
-    }
+    about.about = body.about
+    user.name = body.name
+
+    await about.save()
+    await user.save()
+
+    return res.json({about: about, name: user.name})
   }
   catch {
-    res.status(500).json({error: 'Error in saving about'})
+    return res.status(500).json({error: 'Error in saving about'})
   }
 })
 
-module.exports = aboutRouter
+module.exports = profileRouter

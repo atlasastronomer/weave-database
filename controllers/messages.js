@@ -1,7 +1,8 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
+
 const User = require('../models/user')
-const Message = require('../models/message')
+const Message = require('../models/message')  
 
 const messagesRouter = express.Router()
 
@@ -34,34 +35,6 @@ messagesRouter.get('/:id', async (req, res) => {
   })
 
   return res.json(messages)
-})
-
-messagesRouter.post('/:id', async (req, res) => {
-  const body = req.body
-
-  const token = getTokenFrom(req)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  
-  if (!decodedToken.id) {
-    return res.status(401).json({error: 'token invalid'})
-  }
-
-  const recipientUsername = req.params.id
-
-  const sender = await User.findById(decodedToken.id)
-  const recipient = await User.findOne({username: recipientUsername})
-
-  const message = new Message({
-    sender: sender._id,
-    recipient: recipient._id,
-    content: body.content,
-  })
-
-  const sentMessage = await message.save()
-  sender.messages = sender.messages.concat(sentMessage)
-  await sender.save()
-
-  res.json(sentMessage.toJSON())
 })
 
 module.exports = messagesRouter

@@ -10,10 +10,12 @@ const linkSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    trim: true,
   },
   mediaLink: {
     type: String,
     required: true,
+    trim: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
