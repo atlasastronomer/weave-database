@@ -7,7 +7,7 @@ const url = process.env.MONGODB_URI
 mongoose.connect(url)
 
 const commentSchema = new mongoose.Schema({
-  sender: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -21,22 +21,33 @@ const commentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ],
   parent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment',
     default: null,
   },
-  
+  post: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: 'onModel',
+    required: true,
+  },
+  onModel: {
+    type: String,
+    required: true,
+    enum: ['Blog', 'Post'],
+  },
 })
 
 commentSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-    returnedObject.sender = returnedObject.sender.toString()
+    returnedObject.user = returnedObject.user.toString()
     delete returnedObject._id
     delete returnedObject.__v
   }

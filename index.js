@@ -30,6 +30,7 @@ const profileRouter = require('./controllers/profiles')
 const followsRouter = require('./controllers/followRelations')
 const messagesRouter = require('./controllers/messages')
 const likesRouter = require('./controllers/likes')
+const commentsRouter = require('./controllers/comments')
 
 app.use('/api/authentication', authenticationRouter)
 app.use('/api/users', usersRouter)
@@ -42,6 +43,7 @@ app.use('/api/profile', profileRouter)
 app.use('/api/follow-info', followsRouter)
 app.use('/api/messages', messagesRouter)
 app.use('/api/likes',likesRouter)
+app.use('/api/comments',commentsRouter)
 
 /** Handling of requests with unknown endpoints */
 const unknownEndpoint = (req, res) => {
