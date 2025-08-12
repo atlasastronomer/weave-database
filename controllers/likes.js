@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Post = require('../models/post')
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 
 const likesRouter = express.Router()
 
@@ -64,5 +65,29 @@ likesRouter.post('/posts/:id', async (req, res) => {
   return res.json(updatedPost.likes)
 })
 
+likesRouter.post('/comments/:id', async (req, res) => {
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: 'token invalid' })
+  }
+
+  const userId = decodedToken.id
+  const comment = await Comment.findById(req.params.id)
+
+  if (!comment) {
+    return res.status(404).json({ error: 'comment not found' }) 
+  }
+
+  const alreadyLiked = comment.likes.includes(userId)
+
+  if (alreadyLiked) {
+    comment.likes = comment.likes.filter(id => id.toString() !== userId.toString())
+  } else {
+    comment.likes.push(userId)
+  }
+
+  const updatedComment = await comment.save()
+  return res.json(updatedComment.likes)
+})
 
 module.exports = likesRouter

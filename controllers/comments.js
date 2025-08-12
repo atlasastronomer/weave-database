@@ -25,12 +25,7 @@ const buildCommentTree = (comments) => {
   comments.forEach(comment => {
     if (comment.parent) {
       const parent = map[comment.parent.toString()]
-      if (parent) {
-        parent.children.push(comment)
-      }
-      else {
-        roots.push(comment)
-      }
+      parent.children.push(comment)
     }
     else {
       roots.push(comment)
@@ -45,15 +40,15 @@ commentsRouter.get('/:id', async (req, res) => {
     const blogId = req.params.id
 
     const comments = await Comment.find({ post: blogId, onModel: 'Blog' })
-      .populate({
-        path: 'user',
-        select: 'username avatar',
-        populate: {
-          path: 'avatar',
-          select: 'publicId'
-        }
-      })
-      .lean()
+    .populate({
+      path: 'user',
+      select: 'username avatar',
+      populate: {
+        path: 'avatar',
+        select: 'publicId'
+      }
+    })
+    .lean()
 
     comments.forEach(comment => {
       comment.id = comment._id.toString()
@@ -70,22 +65,24 @@ commentsRouter.get('/:id', async (req, res) => {
 commentsRouter.post('/:id', async (req, res) => {
   try {
     const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-
     if (!decodedToken.id) {
       return res.status(401).json({ error: 'token invalid' })
     }
 
-    const body = req.body
+    const { content, parent, onModel } = req.body
     const postId = req.params.id
 
     const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return res.status(404).json({ error: 'user not found' })
+    }
 
     const comment = new Comment({
       user: user._id,
-      content: body.content,
-      parent: body.parent || null,
+      content,
+      parent: parent || null,
       post: postId,
-      onModel: body.onModel
+      onModel
     })
 
     const savedComment = await comment.save()
@@ -93,7 +90,22 @@ commentsRouter.post('/:id', async (req, res) => {
     user.comments.push(savedComment._id)
     await user.save()
 
-    return res.status(201).json(savedComment)
+    const commentObject = await Comment.findById(savedComment._id)
+    .populate({
+      path: 'user',
+      select: 'username avatar',
+      populate: {
+        path: 'avatar',
+        select: 'publicId'
+      }
+    })
+    .lean()
+
+    commentObject.id = commentObject._id
+    delete commentObject._id
+
+    return res.status(201).json(commentObject)
+
   } catch (err) {
     console.error(err)
     return res.status(500).json({ error: 'Error posting comment' })

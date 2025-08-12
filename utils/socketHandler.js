@@ -32,7 +32,7 @@ const initSocket = (server) => {
         const recipient = await User.findOne({ username: recipientUsername })
         
         if (!sender || !recipient) {
-          return socket.emit('error', { error: 'User not found' });
+          return socket.emit('error', { error: 'User not found' })
         }
 
         const message = new Message({
