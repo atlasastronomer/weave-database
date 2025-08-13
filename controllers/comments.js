@@ -40,27 +40,40 @@ commentsRouter.get('/:id', async (req, res) => {
     const blogId = req.params.id
 
     const comments = await Comment.find({ post: blogId, onModel: 'Blog' })
-    .populate({
-      path: 'user',
-      select: 'username avatar',
-      populate: {
-        path: 'avatar',
-        select: 'publicId'
-      }
-    })
-    .lean()
+      .populate({
+        path: 'user',
+        select: 'username avatar',
+        populate: {
+          path: 'avatar',
+          select: 'publicId'
+        }
+      })
+      .sort({ timestamp: -1 }) // ✅ Newest-first for top-level comments
+      .lean()
 
     comments.forEach(comment => {
       comment.id = comment._id.toString()
     })
 
+    // Build the tree
     const thread = buildCommentTree(comments)
-    return res.json({thread: thread})
-  }
-  catch (err) {
-    res.status(500).json({err: 'Failed to fetch comments'})
+
+    // Recursively sort children arrays newest-first
+    const sortChildren = (comment) => {
+      if (comment.children && comment.children.length > 0) {
+        comment.children.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        comment.children.forEach(sortChildren)
+      }
+    }
+    thread.forEach(sortChildren)
+
+    return res.json({ thread })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ err: 'Failed to fetch comments' })
   }
 })
+
 
 commentsRouter.post('/:id', async (req, res) => {
   try {
