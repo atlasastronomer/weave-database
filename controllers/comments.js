@@ -7,8 +7,8 @@ const commentsRouter = express.Router()
 
 const getTokenFrom = (req) => {
   const authorization = req.get('authorization')
-  if(authorization && authorization.startsWith('Bearer ')){
-    return authorization.replace('Bearer ','')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
   }
   return null
 }
@@ -25,21 +25,22 @@ const buildCommentTree = (comments) => {
   comments.forEach(comment => {
     if (comment.parent) {
       const parent = map[comment.parent.toString()]
-      parent.children.push(comment)
-    }
-    else {
+      if (parent) {
+        parent.children.push(comment)
+      }
+    } else {
       roots.push(comment)
     }
   })
-  
+
   return roots
 }
 
 commentsRouter.get('/:id', async (req, res) => {
   try {
-    const blogId = req.params.id
+    const postId = req.params.id
 
-    const comments = await Comment.find({ post: blogId, onModel: 'Blog' })
+    const comments = await Comment.find({ post: postId })
       .populate({
         path: 'user',
         select: 'username avatar',
@@ -48,24 +49,29 @@ commentsRouter.get('/:id', async (req, res) => {
           select: 'publicId'
         }
       })
-      .sort({ timestamp: -1 }) // ✅ Newest-first for top-level comments
+      .sort({ timestamp: -1 })
       .lean()
 
     comments.forEach(comment => {
       comment.id = comment._id.toString()
     })
 
-    // Build the tree
     const thread = buildCommentTree(comments)
 
-    // Recursively sort children arrays newest-first
     const sortChildren = (comment) => {
       if (comment.children && comment.children.length > 0) {
-        comment.children.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        comment.children.forEach(child => {
+          child._ts = new Date(child.timestamp).getTime()
+        })
+        comment.children.sort((a, b) => a._ts - b._ts)
         comment.children.forEach(sortChildren)
       }
     }
-    thread.forEach(sortChildren)
+
+    thread.forEach(c => {
+      c._ts = new Date(c.timestamp).getTime()
+      sortChildren(c)
+    })
 
     return res.json({ thread })
   } catch (err) {
@@ -73,7 +79,6 @@ commentsRouter.get('/:id', async (req, res) => {
     res.status(500).json({ err: 'Failed to fetch comments' })
   }
 })
-
 
 commentsRouter.post('/:id', async (req, res) => {
   try {
@@ -95,7 +100,7 @@ commentsRouter.post('/:id', async (req, res) => {
       content,
       parent: parent || null,
       post: postId,
-      onModel
+      onModel: onModel || 'Blog'
     })
 
     const savedComment = await comment.save()
@@ -104,17 +109,17 @@ commentsRouter.post('/:id', async (req, res) => {
     await user.save()
 
     const commentObject = await Comment.findById(savedComment._id)
-    .populate({
-      path: 'user',
-      select: 'username avatar',
-      populate: {
-        path: 'avatar',
-        select: 'publicId'
-      }
-    })
-    .lean()
+      .populate({
+        path: 'user',
+        select: 'username avatar',
+        populate: {
+          path: 'avatar',
+          select: 'publicId'
+        }
+      })
+      .lean()
 
-    commentObject.id = commentObject._id
+    commentObject.id = commentObject._id.toString()
     delete commentObject._id
 
     return res.status(201).json(commentObject)
@@ -124,6 +129,5 @@ commentsRouter.post('/:id', async (req, res) => {
     return res.status(500).json({ error: 'Error posting comment' })
   }
 })
-
 
 module.exports = commentsRouter
