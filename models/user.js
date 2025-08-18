@@ -62,16 +62,24 @@ const userSchema = new mongoose.Schema({
       ref: 'Post',
     }
   ],
-  messages: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Message',
-    }
-  ],
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Comment',
+    }
+  ],
+  favorites: [
+    {
+      item: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        refPath: 'favorites.model'
+      },
+      model: {
+        type: String,
+        required: true,
+        enum: ['Post', 'Blog']
+      }
     }
   ]
 })
